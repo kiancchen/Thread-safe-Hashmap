@@ -1,11 +1,11 @@
 CC=clang
-CFLAGS=-Werror=vla -Wshadow -Wswitch-default -std=c11
-CFLAG_SAN=-fsanitize=address
+CFLAGS=-Werror=vla -Wextra -Wall -Wshadow -Wswitch-default -std=c11
+CFLAG_SAN=$(CFLAGS) -fsanitize=address
 DEPS=
 OBJ=hashmap.o
 
 hashmap.o: hashmap.c hashmap.h $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) $(CFLAG_SAN)
+	$(CC) -c -o $@ $< $(CFLAGS)
 	
 clean:
 	rm *.o
