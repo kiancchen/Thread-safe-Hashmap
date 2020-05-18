@@ -36,12 +36,12 @@ void extend_chain(struct chain *chain) {
 }
 
 int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
-    if (chain == NULL){
+    if (chain == NULL || cmp == NULL || k == NULL) {
         return -1;
     }
     for (size_t i = 0; i < chain->size; ++i) {
         struct entry *entry = chain->entries[i];
-        if (entry == NULL){
+        if (entry == NULL || entry->key == NULL) {
             continue;
         }
         if (cmp(entry->key, k) == 1) {
