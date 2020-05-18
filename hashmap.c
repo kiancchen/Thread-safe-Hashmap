@@ -53,7 +53,7 @@ void extend_map(struct hash_map *map) {
     int index = 0;
     for (size_t i = 0; i < map->capacity; ++i) {
         struct chain *chain = map->chains[i];
-        if (chain == NULL){
+        if (chain == NULL) {
             continue;
         }
         for (size_t j = 0; j < chain->size; ++j) {
@@ -68,7 +68,12 @@ void extend_map(struct hash_map *map) {
     }
     free(map->chains);
     map->capacity *= 2;
-    map->chains = malloc(sizeof(struct chain*) * map->capacity);
+    map->chains = malloc(sizeof(struct chain *) * map->capacity);
+
+    for (int i = 0; i < map->capacity; ++i) {
+        map->chains[i] = NULL;
+    }
+
     for (int k = 0; k < index; ++k) {
         struct entry *entry = buffer[k];
         hash_map_put_entry_move(map, entry->key, entry->key);
@@ -156,12 +161,12 @@ void *hash_map_get_value_ref(struct hash_map *map, void *k) {
 void hash_map_destroy(struct hash_map *map) {
     for (size_t i = 0; i < map->capacity; ++i) {
         struct chain *chain = map->chains[i];
-        if (chain == NULL){
+        if (chain == NULL) {
             continue;
         }
         for (size_t j = 0; j < chain->size; ++j) {
             struct entry *entry = chain->entries[j];
-            if (entry == NULL){
+            if (entry == NULL) {
                 continue;
             }
             // free key and value
