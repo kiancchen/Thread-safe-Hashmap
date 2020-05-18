@@ -73,7 +73,7 @@ void extend_map(struct hash_map *map) {
     map->capacity *= 2;
     map->chains = malloc(sizeof(struct chain *) * map->capacity);
 
-    for (int i = 0; i < map->capacity; ++i) {
+    for (size_t i = 0; i < map->capacity; ++i) {
         map->chains[i] = NULL;
     }
 
@@ -103,7 +103,6 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
         return;
     }
 
-
     // new an entry
     struct entry *new_entry = malloc(sizeof(struct entry));
     new_entry->key = k;
@@ -113,6 +112,7 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
         map->chains[index] = new_chain();
         map->n_chains++;
     }
+    chain = map->chains[index];
 
     // extend the chain if full
     if (chain->size == chain->capacity) {
