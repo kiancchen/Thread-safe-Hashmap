@@ -34,7 +34,7 @@ void extend_chain(struct chain *chain) {
 }
 
 int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
-    for (int i = 0; i < chain->size; ++i) {
+    for (size_t i = 0; i < chain->size; ++i) {
         struct entry *entry = chain->entries[i];
         if (cmp(entry->key, k) == 0) {
             return i;
@@ -49,9 +49,12 @@ void extend_map(struct hash_map *map) {
     }
     struct entry **buffer = malloc(sizeof(struct entry *) * map->n_entries);
     int index = 0;
-    for (int i = 0; i < map->n_chains; ++i) {
+    for (size_t i = 0; i < map->capacity; ++i) {
         struct chain *chain = map->chains[i];
-        for (int j = 0; j < chain->size; ++j) {
+        if (chain == NULL){
+            continue;
+        }
+        for (size_t j = 0; j < chain->size; ++j) {
             struct entry *entry = chain->entries[j];
             if (entry != NULL) {
                 buffer[index] = entry;
@@ -149,9 +152,12 @@ void *hash_map_get_value_ref(struct hash_map *map, void *k) {
 }
 
 void hash_map_destroy(struct hash_map *map) {
-    for (int i = 0; i < map->n_chains; ++i) {
+    for (size_t i = 0; i < map->capacity; ++i) {
         struct chain *chain = map->chains[i];
-        for (int j = 0; j < chain->size; ++j) {
+        if (chain == NULL){
+            continue;
+        }
+        for (size_t j = 0; j < chain->size; ++j) {
             struct entry *entry = chain->entries[j];
             // free key and value
             map->key_destruct(entry->key);
