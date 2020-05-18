@@ -32,7 +32,7 @@ struct chain *new_chain() {
 
 void extend_chain(struct chain *chain) {
     chain->capacity *= 2;
-    chain->entries = realloc(chain->entries, chain->capacity);
+    chain->entries = realloc(chain->entries, sizeof(struct entry *) * chain->capacity);
 }
 
 int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
