@@ -159,6 +159,9 @@ void hash_map_destroy(struct hash_map *map) {
         }
         for (size_t j = 0; j < chain->size; ++j) {
             struct entry *entry = chain->entries[j];
+            if (entry == NULL){
+                continue;
+            }
             // free key and value
             map->key_destruct(entry->key);
             map->value_destruct(entry->value);
