@@ -102,6 +102,7 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
         chain->entries[index_existing]->value = v;
         return;
     }
+    return;
 
     // new an entry
     struct entry *new_entry = malloc(sizeof(struct entry));
