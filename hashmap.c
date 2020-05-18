@@ -41,6 +41,9 @@ int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
     }
     for (size_t i = 0; i < chain->size; ++i) {
         struct entry *entry = chain->entries[i];
+        if (entry == NULL){
+            continue;
+        }
         if (cmp(entry->key, k) == 1) {
             return i;
         }
