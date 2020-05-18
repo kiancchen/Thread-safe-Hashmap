@@ -152,7 +152,7 @@ void *hash_map_get_value_ref(struct hash_map *map, void *k) {
 }
 
 void hash_map_destroy(struct hash_map *map) {
-    for (size_t i = 0; i < map->capacity; ++i) {
+    for (size_t i = 0; i < map->n_chains; ++i) {
         struct chain *chain = map->chains[i];
         if (chain == NULL){
             continue;
