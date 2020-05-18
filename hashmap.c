@@ -113,15 +113,17 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
         map->chains[index] = new_chain();
         map->n_chains++;
     }
-    return;
+
     // extend the chain if full
     if (chain->size == chain->capacity) {
         extend_chain(chain);
     }
+
     // insert the new entry
     chain->entries[chain->size] = new_entry;
     chain->size++;
     map->n_entries++;
+    return;
     extend_map(map);
 }
 
