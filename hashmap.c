@@ -41,7 +41,7 @@ int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
     }
     for (size_t i = 0; i < chain->size; ++i) {
         struct entry *entry = chain->entries[i];
-        if (cmp(entry->key, k) == 0) {
+        if (cmp(entry->key, k) == 1) {
             return i;
         }
     }
@@ -123,7 +123,7 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     chain->entries[chain->size] = new_entry;
     chain->size++;
     map->n_entries++;
-    return;
+
     extend_map(map);
 }
 
