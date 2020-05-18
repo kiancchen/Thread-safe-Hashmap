@@ -16,7 +16,9 @@ struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *)
     map->n_chains = 0;
     map->capacity = 16;
     map->chains = malloc(sizeof(struct chain *) * 16);
-
+    for (int i = 0; i < 16; ++i) {
+        map->chains[i] = NULL;
+    }
     return map;
 }
 
@@ -152,7 +154,7 @@ void *hash_map_get_value_ref(struct hash_map *map, void *k) {
 }
 
 void hash_map_destroy(struct hash_map *map) {
-    for (size_t i = 0; i < map->n_chains; ++i) {
+    for (size_t i = 0; i < map->capacity; ++i) {
         struct chain *chain = map->chains[i];
         if (chain == NULL){
             continue;
