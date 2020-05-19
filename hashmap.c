@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "hashmap.h"
 
 #define INIT_CAPACITY (4096)
