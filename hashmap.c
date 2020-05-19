@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "hashmap.h"
 
+#define INIT_CAPACITY (32)
 
 struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *),
                               void (*key_destruct)(void *), void (*value_destruct)(void *)) {
@@ -16,9 +17,9 @@ struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *)
     map->value_destruct = value_destruct;
     map->n_entries = 0;
     map->n_chains = 0;
-    map->capacity = 16;
-    map->chains = malloc(sizeof(struct chain *) * 16);
-    for (int i = 0; i < 16; ++i) {
+    map->capacity = INIT_CAPACITY;
+    map->chains = malloc(sizeof(struct chain *) * INIT_CAPACITY);
+    for (int i = 0; i < INIT_CAPACITY; ++i) {
         map->chains[i] = NULL;
     }
     return map;
