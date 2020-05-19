@@ -108,6 +108,8 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
 
         // modify the existing one
         map->value_destruct(chain->entries[index_existing]->value);
+        map->key_destruct(chain->entries[index_existing]->key);
+        chain->entries[index_existing]->key = k;
         chain->entries[index_existing]->value = v;
         pthread_mutex_unlock(&map->mutex);
         return;
