@@ -142,7 +142,7 @@ void hash_map_remove_entry(struct hash_map *map, void *k) {
         return;
     }
 
-
+    pthread_mutex_lock(&map->mutex);
     // work out the hash value as index
     size_t index = map->hash(k) % map->capacity;
     struct chain *chain = map->chains[index];
@@ -151,14 +151,15 @@ void hash_map_remove_entry(struct hash_map *map, void *k) {
     }
     int index_existing = has_same_entry(map->cmp, chain, k);
     if (index_existing != -1) {
-        pthread_mutex_lock(&map->mutex);
+
         map->key_destruct(chain->entries[index_existing]->key);
         map->value_destruct(chain->entries[index_existing]->value);
         free(chain->entries[index_existing]);
         chain->entries[index_existing] = NULL;
         map->n_entries--;
-        pthread_mutex_unlock(&map->mutex);
+
     }
+    pthread_mutex_unlock(&map->mutex);
 
 
 }
