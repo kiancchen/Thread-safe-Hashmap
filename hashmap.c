@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "hashmap.h"
-#include <pthread.h>
+
 
 struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *),
                               void (*key_destruct)(void *), void (*value_destruct)(void *)) {
@@ -9,6 +9,7 @@ struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *)
     }
     struct hash_map *map = malloc(sizeof(struct hash_map));
     // init map
+    pthread_mutex_init(map->mutex, NULL);
     map->hash = hash;
     map->cmp = cmp;
     map->key_destruct = key_destruct;
@@ -93,9 +94,9 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     if (map == NULL || k == NULL || v == NULL) {
         return;
     }
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, NULL);
-    pthread_mutex_lock(&mutex);
+
+
+    pthread_mutex_lock(map->mutex);
     // work out the hash value as index
     size_t index = map->hash(k) % map->capacity;
     struct chain *chain = map->chains[index];
@@ -130,17 +131,16 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     chain->size++;
     map->n_entries++;
     extend_map(map);
-    pthread_mutex_unlock(&mutex);
-    pthread_mutex_destroy(&mutex);
+    pthread_mutex_unlock(map->mutex);
+
 }
 
 void hash_map_remove_entry(struct hash_map *map, void *k) {
     if (map == NULL || k == NULL) {
         return;
     }
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, NULL);
-    pthread_mutex_lock(&mutex);
+
+    pthread_mutex_lock(map->mutex);
     // work out the hash value as index
     size_t index = map->hash(k) % map->capacity;
     struct chain *chain = map->chains[index];
@@ -155,8 +155,8 @@ void hash_map_remove_entry(struct hash_map *map, void *k) {
         chain->entries[index_existing] = NULL;
         map->n_entries--;
     }
-    pthread_mutex_unlock(&mutex);
-    pthread_mutex_destroy(&mutex);
+    pthread_mutex_unlock(map->mutex);
+
 }
 
 void *hash_map_get_value_ref(struct hash_map *map, void *k) {
@@ -201,5 +201,6 @@ void hash_map_destroy(struct hash_map *map) {
     // free chains
     free(map->chains);
     // free the map
+    pthread_mutex_destroy(map->mutex);
     free(map);
 }

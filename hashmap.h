@@ -2,7 +2,7 @@
 #define HASHMAP_H
 
 #include <stdlib.h>
-
+#include <pthread.h>
 
 struct entry {
     void *key;
@@ -20,6 +20,7 @@ struct hash_map {
     size_t n_chains;
     size_t capacity;
     size_t n_entries;
+    pthread_mutex_t *mutex;
 
     size_t (*hash)(void *);
 
