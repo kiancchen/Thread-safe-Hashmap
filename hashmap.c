@@ -32,10 +32,10 @@ struct chain *new_chain() {
     return chain;
 }
 
-//void extend_chain(struct chain *chain) {
-//    chain->capacity *= 2;
-//    chain->entries = realloc(chain->entries, sizeof(struct entry *) * chain->capacity);
-//}
+void extend_chain(struct chain *chain) {
+    chain->capacity *= 2;
+    chain->entries = realloc(chain->entries, sizeof(struct entry *) * chain->capacity);
+}
 
 int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
     if (chain == NULL || cmp == NULL || k == NULL) {
@@ -121,8 +121,11 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
 
     // extend the chain if full
     if (chain->size == chain->capacity) {
-//        extend_chain(chain);
-        extend_map(map);
+        if (map->n_entries / map->n_chains > 2){
+            extend_map(map);
+        }else{
+            extend_chain(chain);
+        }
     }
 
     // insert the new entry
