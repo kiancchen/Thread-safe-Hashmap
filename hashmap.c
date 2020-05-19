@@ -32,10 +32,10 @@ struct chain *new_chain() {
     return chain;
 }
 
-void extend_chain(struct chain *chain) {
-    chain->capacity *= 2;
-    chain->entries = realloc(chain->entries, sizeof(struct entry *) * chain->capacity);
-}
+//void extend_chain(struct chain *chain) {
+//    chain->capacity *= 2;
+//    chain->entries = realloc(chain->entries, sizeof(struct entry *) * chain->capacity);
+//}
 
 int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
     if (chain == NULL || cmp == NULL || k == NULL) {
@@ -54,9 +54,7 @@ int has_same_entry(int (*cmp)(void *, void *), struct chain *chain, void *k) {
 }
 
 void extend_map(struct hash_map *map) {
-    if ((float) map->n_chains / (float) map->capacity < 0.75) {
-        return;
-    }
+
     struct entry **buffer = malloc(sizeof(struct entry *) * map->n_entries);
     int index = 0;
     for (size_t i = 0; i < map->capacity; ++i) {
@@ -94,8 +92,6 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     if (map == NULL || k == NULL || v == NULL) {
         return;
     }
-
-
     pthread_mutex_lock(&map->mutex);
     // work out the hash value as index
     size_t index = map->hash(k) % map->capacity;
@@ -104,9 +100,11 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     // check if there's a same key
     int index_existing = has_same_entry(map->cmp, chain, k);
     if (index_existing != -1) {
+
         // modify the existing one
         map->value_destruct(chain->entries[index_existing]->value);
         chain->entries[index_existing]->value = v;
+
         return;
     }
 
@@ -123,14 +121,18 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
 
     // extend the chain if full
     if (chain->size == chain->capacity) {
-        extend_chain(chain);
+//        extend_chain(chain);
+        extend_map(map);
     }
 
     // insert the new entry
     chain->entries[chain->size] = new_entry;
     chain->size++;
     map->n_entries++;
-    extend_map(map);
+
+    if ((float) map->n_chains / (float) map->capacity >= 0.75) {
+        extend_map(map);
+    }
     pthread_mutex_unlock(&map->mutex);
 
 }
