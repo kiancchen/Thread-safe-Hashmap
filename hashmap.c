@@ -93,7 +93,7 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     if (map == NULL || k == NULL || v == NULL) {
         return;
     }
-    pthread_mutex_trylock(&map->mutex);
+    pthread_mutex_lock(&map->mutex);
     if ((float) map->n_chains / (float) map->capacity >= 0.75) {
         extend_map(map);
     }
