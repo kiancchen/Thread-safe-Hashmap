@@ -144,7 +144,7 @@ void hash_map_remove_entry(struct hash_map *map, void *k) {
     }
 
     pthread_mutex_lock(&map->mutex);
-    // work out the hash value as index
+    // work out the hash value as inde
     size_t index = map->hash(k) % map->capacity;
     struct chain *chain = map->chains[index];
     if (chain == NULL) {
