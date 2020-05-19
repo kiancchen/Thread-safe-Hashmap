@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "hashmap.h"
 
-#define INIT_CAPACITY (32)
+#define INIT_CAPACITY (4096)
 
 struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *),
                               void (*key_destruct)(void *), void (*value_destruct)(void *)) {
