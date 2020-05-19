@@ -166,16 +166,20 @@ void *hash_map_get_value_ref(struct hash_map *map, void *k) {
     if (map == NULL || k == NULL) {
         return NULL;
     }
+    pthread_mutex_lock(&map->mutex);
     size_t index = map->hash(k) % map->capacity;
     struct chain *chain = map->chains[index];
     if (chain == NULL) {
+        pthread_mutex_unlock(&map->mutex);
         return NULL;
     }
 
     int index_existing = has_same_entry(map->cmp, chain, k);
     if (index_existing != -1) {
+        pthread_mutex_unlock(&map->mutex);
         return chain->entries[index_existing]->value;
     }
+    pthread_mutex_unlock(&map->mutex);
     return NULL;
 }
 
