@@ -10,6 +10,7 @@ struct hash_map *hash_map_new(size_t (*hash)(void *), int (*cmp)(void *, void *)
     }
     struct hash_map *map = malloc(sizeof(struct hash_map));
     // init map
+
     pthread_mutex_init(&map->mutex, NULL);
     map->hash = hash;
     map->cmp = cmp;
@@ -93,7 +94,7 @@ void hash_map_put_entry_move(struct hash_map *map, void *k, void *v) {
     if (map == NULL || k == NULL || v == NULL) {
         return;
     }
-    pthread_mutex_trylock(&map->mutex);
+    pthread_mutex_lock(&map->mutex);
     if ((float) map->n_chains / (float) map->capacity >= 0.75) {
         extend_map(map);
     }
@@ -142,7 +143,7 @@ void hash_map_remove_entry(struct hash_map *map, void *k) {
         return;
     }
 
-    pthread_mutex_trylock(&map->mutex);
+    pthread_mutex_lock(&map->mutex);
     // work out the hash value as index
     size_t index = map->hash(k) % map->capacity;
     struct chain *chain = map->chains[index];
