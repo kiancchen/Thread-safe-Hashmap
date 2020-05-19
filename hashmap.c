@@ -151,7 +151,7 @@ void hash_map_remove_entry(struct hash_map *map, void *k) {
     }
     int index_existing = has_same_entry(map->cmp, chain, k);
     if (index_existing != -1) {
-        pthread_mutex_trylock(&map->mutex);
+        pthread_mutex_lock(&map->mutex);
         map->key_destruct(chain->entries[index_existing]->key);
         map->value_destruct(chain->entries[index_existing]->value);
         free(chain->entries[index_existing]);
